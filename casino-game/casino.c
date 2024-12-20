@@ -31,7 +31,7 @@ void displayProfile(pemain currPlayer);
 void playBlackjack();
 void playHighOrLow();
 void playHeadOrTail();
-void playBarakat();
+void playBarakat(pemain currPlayer);
 
 int searching(const char* cariUsername, const char* cariPassword);
 
@@ -113,7 +113,7 @@ void gameMenu(pemain currPlayer){ //parameter profile
                 // playHeadOrTail();
                 break;
             case 4:
-                // playBarakat();
+                playBarakat(currPlayer);
                 break;
             case 5:
                 printf("Kembali ke menu utama...\n");
@@ -193,8 +193,9 @@ void playHighOrLow(){
 void playHeadOrTail(){
 
 }
-void playBarakat(){
 
+void playBarakat(pemain currPlayer){
+    printf("%s", currPlayer.username);
 }
 
 
