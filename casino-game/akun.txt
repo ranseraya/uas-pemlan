@@ -1,0 +1,2 @@
+anton anton123 pemain 100 30 50
+siregar siregar123 pemain 500 50 250
