@@ -19,40 +19,27 @@ pemain currPlayer;
 int playerIndex;
 int totalUsers = 0;
 
-void gameMenu(pemain currPlayer);//parameter profile
+void gameMenu();//parameter profile
 void adminMenu();
 void mainMenu();
 void registrasi();
 void loadGame();
 void importProfile();
+void saveData();
 
-void displayProfile(pemain currPlayer);
+void displayProfile();
 
 void playBlackjack();
 void playHighOrLow();
 void playHeadOrTail();
-void playBarakat(pemain currPlayer);
+void playBarakat();
 
 int searching(const char* cariUsername, const char* cariPassword);
 
 int main(){
-    // pemain pemain1;
-    importProfile();
-    // loadGame();
     
-	
-    
+	importProfile();
     mainMenu();
-    
-    	// printf("Data Pemain:\n");
-    	// for (int i = 0; i < 2; i++) {
-	    // 	printf("Username: %s\n", users[i].username);
-		//     printf("Password: %s\n", users[i].password);
-	    //     printf("Role: %s\n", users[i].role);
-	    //     printf("Cash: %d\n", users[i].cash);
-	    //     printf("Game Played: %d\n", users[i].gamePlayed);
-	    //     printf("Profit: %d\n\n", users[i].profit);
-		// }
     
 }
 
@@ -64,30 +51,32 @@ void mainMenu(){
     printf("------------------------------- TEAM TWO NEVER END ---------------------------------\n\n");
 	printf("1. New Profile\n");
     printf("2. Load Profile\n");
-    printf("0. Exit\n");
+    printf("0. Exit & Save Progress\n");
     printf("Program: ");
     scanf("%d", &pilihan);
     switch(pilihan){
         case 1:
             //New profile
-            gameMenu(currPlayer); // parameter profile
+            registrasi();
+            break;
         case 2:
             //Load game profile
             // if( role == 'admin'){
                 //adminMenu();
             // }
             loadGame();
-            gameMenu(currPlayer);
+            //gameMenu(currPlayer);
             break;
         case 0:
-            printf("Keluar game...\n");
+            printf("Keluar game dan menyimpan progress...\n");
+            saveData();
             return;
         //default:
     }
     //}
 }
 
-void gameMenu(pemain currPlayer){ //parameter profile
+void gameMenu(){
     int pilihanGame;
     //while (1) {
         displayProfile(currPlayer);
@@ -142,9 +131,7 @@ void importProfile(){
                   &users[totalUsers].profit) == 6){
         totalUsers++;    
 	}
-	
-
-	
+	fclose(ptr);
 }
 
 // Menu untuk admin
@@ -155,30 +142,52 @@ void adminMenu(){
 
 // Registrasi / membuat akun
 void registrasi(){
-
+	char tempUsername[20];
+	char tempPassword[20];
+	
+	printf("Masukkan username baru: ");
+	scanf("%20s", tempUsername);
+	printf("Masukkan password baru: ");
+	scanf("%20s", tempPassword);
+	
+	if(searching(tempUsername, tempPassword) >= 1){
+		printf("Username sudah ada. Gunakan username lain!\n");
+		registrasi();
+	}else{
+		strcpy(users[totalUsers].username, tempUsername);
+		strcpy(users[totalUsers].password, tempPassword);
+		users[totalUsers].cash = 100;
+		users[totalUsers].gamePlayed = 0;
+		users[totalUsers].profit = 0;
+		totalUsers++;
+		printf("\nAkun berhasil dibuat, silahkan login menggunakan username dan password akun yang telah dibuat!\n\n");
+		loadGame();
+	}
 }
 
 // Load profile pemain
 void loadGame(){
-    char curUsername[10];
-    char curPassword[20];
+    char tempUsername[20];
+    char tempPassword[20];
     
     printf("Masukkan username: ");
-    scanf("%10s", curUsername); 
+    scanf("%10s", tempUsername); 
     printf("Masukkan password: ");
-    scanf("%20s", curPassword); 
+    scanf("%20s", tempPassword); 
 
-    if (searching(curUsername, curPassword)) {
-        printf("Profil ditemukan. Selamat datang, %s!\n", curUsername);
+    if (searching(tempUsername, tempPassword) == 1) {
+        printf("Profil ditemukan. Selamat datang, %s!\n", tempUsername);
+        system("pause");
         currPlayer = users[playerIndex];
+        gameMenu(currPlayer);
     } else {
-        printf("Username atau password salah.\n");
+        printf("\nUsername atau password salah.\n\n");
         loadGame();
     }
 }
 
 // menampilkan profil singkat pemain
-void displayProfile(pemain currPlayer){
+void displayProfile(){
 	system("cls");
     printf("| Username: %-10s| Chip: %-9d| Game Played: %-4d| Profit: %-10d|\n", currPlayer.username, currPlayer.cash, currPlayer.gamePlayed, currPlayer.profit);
 }
@@ -194,19 +203,40 @@ void playHeadOrTail(){
 
 }
 
-void playBarakat(pemain currPlayer){
+void playBarakat(){
     printf("%s", currPlayer.username);
 }
 
 
-
 int searching(const char* cariUsername, const char* cariPassword) {
     for (int i = 0; i < totalUsers; i++) {
-        if (strcmp(cariUsername, users[i].username) == 0 && 
-            strcmp(cariPassword, users[i].password) == 0) {
-            playerIndex = i;
-            return 1; 
+        if (strcmp(cariUsername, users[i].username) == 0) {
+        	if(strcmp(cariPassword, users[i].password) == 0){
+        		playerIndex = i;
+            	return 1; 
+			}
+            return 2;
         }
     }
-    return 0; 
+    return 0;
+}
+
+void saveData() {
+    FILE* ptr = fopen("akun.txt", "w");
+    if (ptr == NULL) {
+        printf("Unable to open file for writing.\n");
+        return;
+    }
+
+    for (int i = 0; i < totalUsers; i++) {
+        fprintf(ptr, "%s %s %s %d %d %d\n", 
+                users[i].username, 
+                users[i].password, 
+                users[i].role, 
+                users[i].cash, 
+                users[i].gamePlayed, 
+                users[i].profit);
+    }
+
+    fclose(ptr);
 }
