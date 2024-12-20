@@ -14,10 +14,14 @@ struct profilePemain{
 };
 typedef struct profilePemain pemain;
 
+pemain users[100];
+
 void gameMenu(pemain pemain);//parameter profile
 void adminMenu();
+void mainMenu();
 void registrasi();
 void loadGame();
+void importProfile();
 
 void displayProfile(pemain pemain);
 
@@ -27,20 +31,32 @@ void playHeadOrTail();
 void playBarakat();
 
 int main(){
-    // profile* users = NULL;
     pemain pemain1;
-    strcpy(pemain1.username, "Anton");
-    strcpy(pemain1.password, "admin");
-    strcpy(pemain1.role, "pemain");
-    pemain1.cash = 5000000;
-    pemain1.gamePlayed = 30;
-    pemain1.profit = 3000000;
-    int pilihan;
-    while(1){
+    importProfile();
+    
+	
+    
+    mainMenu(pemain1);
+    
+    	printf("Data Pemain:\n");
+    	for (int i = 0; i < 2; i++) {
+	    	printf("Username: %s\n", users[i].username);
+		    printf("Password: %s\n", users[i].password);
+	        printf("Role: %s\n", users[i].role);
+	        printf("Cash: %d\n", users[i].cash);
+	        printf("Game Played: %d\n", users[i].gamePlayed);
+	        printf("Profit: %d\n\n", users[i].profit);
+		}
+    
+}
+
+void mainMenu(pemain pemain){
+	int pilihan;
+    //while(1){
     system("cls");
     printf("----------------------------- PROJECT UAS CASINO GACOR -----------------------------\n");
-    printf("------------------------------- TEAM TOW NEVER END ---------------------------------\n");
-    printf("1. New Profile\n");
+    printf("------------------------------- TEAM TWO NEVER END ---------------------------------\n\n");
+	printf("1. New Profile\n");
     printf("2. Load Profile\n");
     printf("0. Exit\n");
     printf("Program: ");
@@ -49,25 +65,26 @@ int main(){
         case 1:
             //New profile
             system("cls");
-            gameMenu(pemain1); // parameter profile
+            gameMenu(pemain); // parameter profile
         case 2:
             //Load game profile
             // if( role == 'admin'){
                 //adminMenu();
             // }
             system("cls");
-            gameMenu(pemain1);
+            gameMenu(pemain);
+            break;
         case 0:
             printf("Keluar game...\n");
             return 0;
-        default:
+        //default:
     }
-    }
+    //}
 }
 
 void gameMenu(pemain pemain){ //parameter profile
     int pilihanGame;
-    while (1) {
+    //while (1) {
         displayProfile(pemain);
         printf("\n=== Daftar Game  ===\n");
         printf("0. Info game\n");
@@ -95,11 +112,35 @@ void gameMenu(pemain pemain){ //parameter profile
                 break;
             case 5:
                 printf("Kembali ke menu utama...\n");
-                return;
+                mainMenu(pemain);
+                break;
             default:
                 printf("Pilihan tidak valid! masukkan nomor program...\n");
         }
+    //}
+}
+
+void importProfile(){
+	
+	FILE* ptr = fopen("akun.txt", "r");
+    if (ptr == NULL) {
+        printf("no such file.");
+        return 0;
     }
+	
+	int count;
+    char buf[100];
+    while (fscanf(ptr, "%s %s %s %d %d %d ", users[count].username, 
+                  users[count].password, 
+                  users[count].role, 
+                  &users[count].cash, 
+                  &users[count].gamePlayed, 
+                  &users[count].profit) == 6){
+        count++;    
+	}
+	
+
+	
 }
 
 // Menu untuk admin
@@ -120,6 +161,7 @@ void loadGame(){
 
 // menampilkan profil singkat pemain
 void displayProfile(pemain pemain){
+	system("cls");
     printf("| Username: %-10s| Chip: %-9d| Game Played: %-4d| Profit: %-10d|\n", pemain.username, pemain.cash, pemain.gamePlayed, pemain.profit);
 }
 
